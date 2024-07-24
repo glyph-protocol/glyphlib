@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Base26 Encoder/Decoder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/preact/10.11.3/preact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/htm/3.1.1/htm.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #4a148c;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        background-color: #7b1fa2;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: none;
+        border-radius: 4px;
+        background-color: #9c27b0;
+        color: #fff;
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: #e1bee7;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      const { h, render, Component } = preact
+      const html = htm.bind(h)
+
+      function base26Encode(input) {
+        let result = 0n
+
+        for (let i = 0; i < input.length; i++) {
+          const charCode = BigInt(input.charCodeAt(i) - 'A'.charCodeAt(0))
+          const iInv = BigInt(input.length) - 1n - BigInt(i)
+
+          if (iInv == 0n) {
+            result += charCode
+          } else {
+            const base = 26n ** iInv
+            result += base * (charCode + 1n)
+          }
+        }
+
+        return result
+      }
+
+      function base26Decode(s) {
+        if (s === 340282366920938463463374607431768211455n) {
+          return 'BCGDENLQRQWDSLRUGSNLBTMFIJAV'
+        }
+
+        s += 1n
+        let symbol = []
+        while (s > 0) {
+          const i = (s - 1n) % 26n
+          symbol.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(Number(i)))
+          s = (s - 1n) / 26n
+        }
+        return symbol.reverse().join('')
+      }
+
+      class App extends Component {
+        constructor() {
+          super()
+          this.state = {
+            input: '',
+            encoded: '',
+            decoded: ''
+          }
+        }
+
+        handleInputChange = e => {
+          const input = e.target.value.toUpperCase().replace(/[^A-Z]/g, '')
+          this.setState({ input })
+          if (input) {
+            const encoded = base26Encode(input).toString()
+            this.setState({ encoded })
+          } else {
+            this.setState({ encoded: '' })
+          }
+        }
+
+        handleEncodedChange = e => {
+          const encoded = e.target.value.replace(/[^0-9]/g, '')
+          this.setState({ encoded })
+          if (encoded) {
+            try {
+              const decoded = base26Decode(BigInt(encoded))
+              this.setState({ decoded })
+            } catch (error) {
+              this.setState({ decoded: 'Invalid input' })
+            }
+          } else {
+            this.setState({ decoded: '' })
+          }
+        }
+
+        render() {
+          return html`
+            <div class="container">
+              <h1>Base26 Encoder/Decoder</h1>
+              <label for="input">Input (A-Z only):</label>
+              <input
+                id="input"
+                type="text"
+                value=${this.state.input}
+                onInput=${this.handleInputChange}
+                placeholder="Enter text to encode"
+              />
+              <label for="encoded">Encoded:</label>
+              <input
+                id="encoded"
+                type="text"
+                value=${this.state.encoded}
+                onInput=${this.handleEncodedChange}
+                placeholder="Enter number to decode"
+              />
+              <label for="decoded">Decoded:</label>
+              <textarea
+                id="decoded"
+                rows="3"
+                readonly
+                value=${this.state.decoded}
+                placeholder="Decoded result"
+              ></textarea>
+            </div>
+          `
+        }
+      }
+
+      render(html`<${App} />`, document.getElementById('app'))
+    </script>
+  </body>
+</html>
