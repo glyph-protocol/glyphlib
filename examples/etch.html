@@ -120,6 +120,7 @@
                 .join('')
 
               var bytes = 10 + encodedHex.length / 2
+              bytes = bytes.toString(16).padStart(2, '0')
 
               this.setState({ encodedHex, bytes })
             } else {
@@ -230,8 +231,8 @@
                 id="encodedHex"
                 rows="5"
                 readonly
-                value="${this.state.prefix}OP_PUSHBYTES_${this.state
-                  .bytes} 020304 ${this.state.encodedHex}${this.state.suffix}"
+                value="${this.state.prefix} ${this.state.bytes} 020304 ${this
+                  .state.encodedHex} ${this.state.suffix}"
                 placeholder="Encoded hex will appear here"
               ></textarea>
             </div>
