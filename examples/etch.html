@@ -50,6 +50,8 @@
   <body>
     <div id="app"></div>
     <script type="module">
+      import { base26Encode, base26Decode } from '../src/base26.js'
+      import { encodeLEB128, decodeLEB128 } from '../src/leb128.js'
       const { h, render, Component } = preact
       const html = htm.bind(h)
 
@@ -57,6 +59,8 @@
         constructor() {
           super()
           this.state = {
+            prefix: '6a54 OP_PUSHBYTES_ 020304',
+            suffix: '05a4010a010801',
             name: '',
             divisibility: '',
             premine: '',
@@ -67,6 +71,7 @@
             endHeight: '',
             startOffset: '',
             endOffset: '',
+            encodedNum: 0n,
             encodedHex: ''
           }
         }
@@ -103,9 +108,16 @@
                 : undefined
             }
 
-            const runestone = Runestone.create(json, 'etch')
-            const encodedHex = runestone.encipher().toString('hex')
-            this.setState({ encodedHex })
+            // const runestone = Runestone.create(json, 'etch')
+            // const encodedHex = runestone.encipher().toString('hex')
+
+            if (json.name) {
+              const encodedHex = base26Encode(json.name).toString()
+              // const encodedHex = encodeLEB128(encodedNum)
+              this.setState({ encodedHex })
+            } else {
+              this.setState({ encodedHex: '' })
+            }
           } catch (error) {
             this.setState({ encodedHex: 'Invalid input' })
           }
@@ -122,7 +134,7 @@
                 type="text"
                 value=${this.state.name}
                 onInput=${this.handleInputChange}
-                placeholder="Enter rune name"
+                placeholder="Enter glyph name"
               />
               <label for="divisibility">Divisibility:</label>
               <input
@@ -209,9 +221,10 @@
               <label for="encodedHex">Encoded Hex:</label>
               <textarea
                 id="encodedHex"
-                rows="3"
+                rows="5"
                 readonly
-                value=${this.state.encodedHex}
+                value="${this.state.prefix}${this.state.encodedHex}${this.state
+                  .suffix}"
                 placeholder="Encoded hex will appear here"
               ></textarea>
             </div>
