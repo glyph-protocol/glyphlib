@@ -60,6 +60,7 @@
           this.state = {
             input: '',
             encoded: '',
+            encodedHex: '',
             decoded: ''
           }
         }
@@ -70,12 +71,15 @@
           if (input) {
             try {
               const encoded = encodeLEB128(BigInt(input))
-              this.setState({ encoded: encoded.join(' ') })
+              const encodedHex = encoded
+                .map(byte => byte.toString(16).padStart(2, '0'))
+                .join(' ')
+              this.setState({ encoded: encoded.join(' '), encodedHex })
             } catch (error) {
-              this.setState({ encoded: 'Invalid input' })
+              this.setState({ encoded: 'Invalid input', encodedHex: '' })
             }
           } else {
-            this.setState({ encoded: '' })
+            this.setState({ encoded: '', encodedHex: '' })
           }
         }
 
@@ -114,6 +118,14 @@
                 onInput=${this.handleEncodedChange}
                 placeholder="Enter bytes to decode"
               />
+              <label for="encodedHex">Encoded (Hex):</label>
+              <textarea
+                id="encodedHex"
+                rows="1"
+                readonly
+                value=${this.state.encodedHex}
+                placeholder="Hexadecimal representation"
+              ></textarea>
               <label for="decoded">Decoded (BigInt):</label>
               <textarea
                 id="decoded"

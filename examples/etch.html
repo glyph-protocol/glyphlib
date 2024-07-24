@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Glyph Creator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/preact/10.11.3/preact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/htm/3.1.1/htm.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #4a148c;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        background-color: #7b1fa2;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: none;
+        border-radius: 4px;
+        background-color: #9c27b0;
+        color: #fff;
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: #e1bee7;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      const { h, render, Component } = preact
+      const html = htm.bind(h)
+
+      class App extends Component {
+        constructor() {
+          super()
+          this.state = {
+            name: '',
+            divisibility: '',
+            premine: '',
+            symbol: '',
+            amount: '',
+            cap: '',
+            startHeight: '',
+            endHeight: '',
+            startOffset: '',
+            endOffset: '',
+            encodedHex: ''
+          }
+        }
+
+        handleInputChange = e => {
+          const { name, value } = e.target
+          this.setState({ [name]: value })
+        }
+
+        createEtching = () => {
+          try {
+            const json = {
+              name: this.state.name,
+              divisibility: this.state.divisibility
+                ? parseInt(this.state.divisibility)
+                : undefined,
+              premine: this.state.premine
+                ? parseInt(this.state.premine)
+                : undefined,
+              symbol: this.state.symbol,
+              amount: parseInt(this.state.amount),
+              cap: parseInt(this.state.cap),
+              startHeight: this.state.startHeight
+                ? parseInt(this.state.startHeight)
+                : undefined,
+              endHeight: this.state.endHeight
+                ? parseInt(this.state.endHeight)
+                : undefined,
+              startOffset: this.state.startOffset
+                ? parseInt(this.state.startOffset)
+                : undefined,
+              endOffset: this.state.endOffset
+                ? parseInt(this.state.endOffset)
+                : undefined
+            }
+
+            const runestone = Runestone.create(json, 'etch')
+            const encodedHex = runestone.encipher().toString('hex')
+            this.setState({ encodedHex })
+          } catch (error) {
+            this.setState({ encodedHex: 'Invalid input' })
+          }
+        }
+
+        render() {
+          return html`
+            <div class="container">
+              <h1>Glyph Creator</h1>
+              <label for="name">Name:</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                value=${this.state.name}
+                onInput=${this.handleInputChange}
+                placeholder="Enter rune name"
+              />
+              <label for="divisibility">Divisibility:</label>
+              <input
+                id="divisibility"
+                name="divisibility"
+                type="text"
+                value=${this.state.divisibility}
+                onInput=${this.handleInputChange}
+                placeholder="Enter divisibility (optional)"
+              />
+              <label for="premine">Premine:</label>
+              <input
+                id="premine"
+                name="premine"
+                type="text"
+                value=${this.state.premine}
+                onInput=${this.handleInputChange}
+                placeholder="Enter premine amount (optional)"
+              />
+              <label for="symbol">Symbol:</label>
+              <input
+                id="symbol"
+                name="symbol"
+                type="text"
+                value=${this.state.symbol}
+                onInput=${this.handleInputChange}
+                placeholder="Enter symbol (optional)"
+              />
+              <label for="amount">Amount:</label>
+              <input
+                id="amount"
+                name="amount"
+                type="text"
+                value=${this.state.amount}
+                onInput=${this.handleInputChange}
+                placeholder="Enter amount per mint"
+              />
+              <label for="cap">Cap:</label>
+              <input
+                id="cap"
+                name="cap"
+                type="text"
+                value=${this.state.cap}
+                onInput=${this.handleInputChange}
+                placeholder="Enter cap"
+              />
+              <label for="startHeight">Start Height:</label>
+              <input
+                id="startHeight"
+                name="startHeight"
+                type="text"
+                value=${this.state.startHeight}
+                onInput=${this.handleInputChange}
+                placeholder="Enter start height (optional)"
+              />
+              <label for="endHeight">End Height:</label>
+              <input
+                id="endHeight"
+                name="endHeight"
+                type="text"
+                value=${this.state.endHeight}
+                onInput=${this.handleInputChange}
+                placeholder="Enter end height (optional)"
+              />
+              <label for="startOffset">Start Offset:</label>
+              <input
+                id="startOffset"
+                name="startOffset"
+                type="text"
+                value=${this.state.startOffset}
+                onInput=${this.handleInputChange}
+                placeholder="Enter start offset (optional)"
+              />
+              <label for="endOffset">End Offset:</label>
+              <input
+                id="endOffset"
+                name="endOffset"
+                type="text"
+                value=${this.state.endOffset}
+                onInput=${this.handleInputChange}
+                placeholder="Enter end offset (optional)"
+              />
+              <button onClick=${this.createEtching}>Create Glyph</button>
+              <label for="encodedHex">Encoded Hex:</label>
+              <textarea
+                id="encodedHex"
+                rows="3"
+                readonly
+                value=${this.state.encodedHex}
+                placeholder="Encoded hex will appear here"
+              ></textarea>
+            </div>
+          `
+        }
+      }
+
+      render(html`<${App} />`, document.getElementById('app'))
+    </script>
+  </body>
+</html>
