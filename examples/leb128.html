@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LEB128 Encoder/Decoder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/preact/10.11.3/preact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/htm/3.1.1/htm.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #4a148c;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        background-color: #7b1fa2;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: none;
+        border-radius: 4px;
+        background-color: #9c27b0;
+        color: #fff;
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: #e1bee7;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      import { encodeLEB128, decodeLEB128 } from '../src/leb128.js'
+      const { h, render, Component } = preact
+      const html = htm.bind(h)
+
+      class App extends Component {
+        constructor() {
+          super()
+          this.state = {
+            input: '',
+            encoded: '',
+            decoded: ''
+          }
+        }
+
+        handleInputChange = e => {
+          const input = e.target.value
+          this.setState({ input })
+          if (input) {
+            try {
+              const encoded = encodeLEB128(BigInt(input))
+              this.setState({ encoded: encoded.join(' ') })
+            } catch (error) {
+              this.setState({ encoded: 'Invalid input' })
+            }
+          } else {
+            this.setState({ encoded: '' })
+          }
+        }
+
+        handleEncodedChange = e => {
+          const encoded = e.target.value.split(' ').map(Number)
+          this.setState({ encoded: e.target.value })
+          if (encoded.length) {
+            try {
+              const { n } = decodeLEB128(encoded)
+              this.setState({ decoded: n.toString() })
+            } catch (error) {
+              this.setState({ decoded: 'Invalid input' })
+            }
+          } else {
+            this.setState({ decoded: '' })
+          }
+        }
+
+        render() {
+          return html`
+            <div class="container">
+              <h1>LEB128 Encoder/Decoder</h1>
+              <label for="input">Input (BigInt):</label>
+              <input
+                id="input"
+                type="text"
+                value=${this.state.input}
+                onInput=${this.handleInputChange}
+                placeholder="Enter BigInt to encode"
+              />
+              <label for="encoded">Encoded (space-separated bytes):</label>
+              <input
+                id="encoded"
+                type="text"
+                value=${this.state.encoded}
+                onInput=${this.handleEncodedChange}
+                placeholder="Enter bytes to decode"
+              />
+              <label for="decoded">Decoded (BigInt):</label>
+              <textarea
+                id="decoded"
+                rows="3"
+                readonly
+                value=${this.state.decoded}
+                placeholder="Decoded result"
+              ></textarea>
+            </div>
+          `
+        }
+      }
+
+      render(html`<${App} />`, document.getElementById('app'))
+    </script>
+  </body>
+</html>
