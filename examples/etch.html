@@ -59,8 +59,9 @@
         constructor() {
           super()
           this.state = {
-            prefix: '6a54 OP_PUSHBYTES_ 020304',
-            suffix: '05a4010a010801',
+            prefix: '6a54 ',
+            suffix: ' 05a4010a010801',
+            bytes: 7,
             name: '',
             divisibility: '',
             premine: '',
@@ -112,9 +113,15 @@
             // const encodedHex = runestone.encipher().toString('hex')
 
             if (json.name) {
-              const encodedHex = base26Encode(json.name).toString()
-              // const encodedHex = encodeLEB128(encodedNum)
-              this.setState({ encodedHex })
+              const encodedNum = base26Encode(json.name)
+              var encodedHex = encodeLEB128(encodedNum)
+              encodedHex = encodedHex
+                .map(byte => byte.toString(16).padStart(2, '0'))
+                .join('')
+
+              var bytes = 10 + encodedHex.length / 2
+
+              this.setState({ encodedHex, bytes })
             } else {
               this.setState({ encodedHex: '' })
             }
@@ -223,8 +230,8 @@
                 id="encodedHex"
                 rows="5"
                 readonly
-                value="${this.state.prefix}${this.state.encodedHex}${this.state
-                  .suffix}"
+                value="${this.state.prefix}OP_PUSHBYTES_${this.state
+                  .bytes} 020304 ${this.state.encodedHex}${this.state.suffix}"
                 placeholder="Encoded hex will appear here"
               ></textarea>
             </div>
