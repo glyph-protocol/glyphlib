@@ -58,8 +58,12 @@
       class App extends Component {
         constructor() {
           super()
+          // var opcode = '54'
+          // var opcode = '5d'
+          var opcode = '60'
           this.state = {
-            prefix: '6a54 ',
+            opcode: opcode,
+            prefix: '6a ',
             suffix: ' 05a4010a010801',
             bytes: 7,
             name: '',
@@ -144,6 +148,7 @@
                 onInput=${this.handleInputChange}
                 placeholder="Enter glyph name"
               />
+              <!--
               <label for="divisibility">Divisibility:</label>
               <input
                 id="divisibility"
@@ -225,14 +230,15 @@
                 onInput=${this.handleInputChange}
                 placeholder="Enter end offset (optional)"
               />
+              -->
               <button onClick=${this.createEtching}>Create Glyph</button>
               <label for="encodedHex">Encoded Hex:</label>
               <textarea
                 id="encodedHex"
                 rows="5"
                 readonly
-                value="${this.state.prefix} ${this.state.bytes} 020304 ${this
-                  .state.encodedHex} ${this.state.suffix}"
+                value="${this.state.prefix}${this.state.opcode} ${this.state
+                  .bytes} 020304 ${this.state.encodedHex} ${this.state.suffix}"
                 placeholder="Encoded hex will appear here"
               ></textarea>
             </div>
