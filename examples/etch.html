@@ -71,6 +71,7 @@
             premine: '',
             symbol: '',
             amount: 1,
+            amount128: 1,
             cap: '',
             startHeight: '',
             endHeight: '',
@@ -127,9 +128,9 @@
               bytes = bytes.toString(16).padStart(2, '0')
 
               var amount = json.amount
-              amount = amount.toString(16).padStart(2, '0')
+              var amount128 = amount.toString(16).padStart(2, '0')
 
-              this.setState({ encodedHex, bytes, amount })
+              this.setState({ encodedHex, bytes, amount, amount128: amount128 })
             } else {
               this.setState({ encodedHex: '' })
             }
@@ -242,7 +243,7 @@
                 readonly
                 value="${this.state.prefix}${this.state.opcode} ${this.state
                   .bytes} 020304 ${this.state.encodedHex}${this.state
-                  .suffix}${this.state.amount}"
+                  .suffix}${this.state.amount128}"
                 placeholder="Encoded hex will appear here"
               ></textarea>
             </div>
