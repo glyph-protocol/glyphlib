@@ -64,7 +64,7 @@
           this.state = {
             opcode: opcode,
             prefix: '6a ',
-            suffix: ' 05a4010a010801',
+            suffix: ' 05a4010a0108',
             bytes: 7,
             name: '',
             divisibility: '',
@@ -126,7 +126,10 @@
               var bytes = 10 + encodedHex.length / 2
               bytes = bytes.toString(16).padStart(2, '0')
 
-              this.setState({ encodedHex, bytes })
+              var amount = json.amount
+              amount = amount.toString(16).padStart(2, '0')
+
+              this.setState({ encodedHex, bytes, amount })
             } else {
               this.setState({ encodedHex: '' })
             }
@@ -238,7 +241,8 @@
                 rows="5"
                 readonly
                 value="${this.state.prefix}${this.state.opcode} ${this.state
-                  .bytes} 020304 ${this.state.encodedHex}${this.state.suffix}"
+                  .bytes} 020304 ${this.state.encodedHex}${this.state
+                  .suffix}${this.state.amount}"
                 placeholder="Encoded hex will appear here"
               ></textarea>
             </div>
