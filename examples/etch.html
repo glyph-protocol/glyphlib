@@ -118,6 +118,9 @@
             // const encodedHex = runestone.encipher().toString('hex')
 
             if (json.name) {
+              const name = json.name.toUpperCase().replace(/[^A-Z]/g, '')
+              this.setState({ name })
+
               const encodedNum = base26Encode(json.name)
               var encodedHex = encodeLEB128(encodedNum)
               encodedHex = encodedHex
@@ -145,6 +148,7 @@
               <h1>Glyph Creator</h1>
               <label for="name">Name:</label>
               <input
+                onKeyUp=${this.createEtching}
                 id="name"
                 name="name"
                 type="text"
@@ -154,6 +158,7 @@
               />
               <label for="amount">Amount:</label>
               <input
+                onKeyUp=${this.createEtching}
                 id="amount"
                 name="amount"
                 type="text"
