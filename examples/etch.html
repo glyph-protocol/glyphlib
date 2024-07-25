@@ -70,7 +70,7 @@
             divisibility: '',
             premine: '',
             symbol: '',
-            amount: '',
+            amount: 1,
             cap: '',
             startHeight: '',
             endHeight: '',
@@ -148,6 +148,15 @@
                 onInput=${this.handleInputChange}
                 placeholder="Enter glyph name"
               />
+              <label for="amount">Amount:</label>
+              <input
+                id="amount"
+                name="amount"
+                type="text"
+                value=${this.state.amount}
+                onInput=${this.handleInputChange}
+                placeholder="Enter amount per mint"
+              />
               <!--
               <label for="divisibility">Divisibility:</label>
               <input
@@ -175,15 +184,6 @@
                 value=${this.state.symbol}
                 onInput=${this.handleInputChange}
                 placeholder="Enter symbol (optional)"
-              />
-              <label for="amount">Amount:</label>
-              <input
-                id="amount"
-                name="amount"
-                type="text"
-                value=${this.state.amount}
-                onInput=${this.handleInputChange}
-                placeholder="Enter amount per mint"
               />
               <label for="cap">Cap:</label>
               <input
@@ -238,7 +238,7 @@
                 rows="5"
                 readonly
                 value="${this.state.prefix}${this.state.opcode} ${this.state
-                  .bytes} 020304 ${this.state.encodedHex} ${this.state.suffix}"
+                  .bytes} 020304 ${this.state.encodedHex}${this.state.suffix}"
                 placeholder="Encoded hex will appear here"
               ></textarea>
             </div>
