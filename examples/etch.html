@@ -156,7 +156,25 @@
                 onInput=${this.handleInputChange}
                 placeholder="Enter glyph name"
               />
-              <label for="amount">Amount:</label>
+              <label for="premine">Initial Amount:</label>
+              <input
+                id="premine"
+                name="premine"
+                type="text"
+                value=${this.state.premine}
+                onInput=${this.handleInputChange}
+                placeholder="Enter premine amount (optional)"
+              />
+              <label for="cap">Number of Mints:</label>
+              <input
+                id="cap"
+                name="cap"
+                type="text"
+                value=${this.state.cap}
+                onInput=${this.handleInputChange}
+                placeholder="Enter cap"
+              />
+              <label for="amount">Mint Amount:</label>
               <input
                 onKeyUp=${this.createEtching}
                 id="amount"
@@ -176,15 +194,6 @@
                 onInput=${this.handleInputChange}
                 placeholder="Enter divisibility (optional)"
               />
-              <label for="premine">Premine:</label>
-              <input
-                id="premine"
-                name="premine"
-                type="text"
-                value=${this.state.premine}
-                onInput=${this.handleInputChange}
-                placeholder="Enter premine amount (optional)"
-              />
               <label for="symbol">Symbol:</label>
               <input
                 id="symbol"
@@ -193,15 +202,6 @@
                 value=${this.state.symbol}
                 onInput=${this.handleInputChange}
                 placeholder="Enter symbol (optional)"
-              />
-              <label for="cap">Cap:</label>
-              <input
-                id="cap"
-                name="cap"
-                type="text"
-                value=${this.state.cap}
-                onInput=${this.handleInputChange}
-                placeholder="Enter cap"
               />
               <label for="startHeight">Start Height:</label>
               <input
