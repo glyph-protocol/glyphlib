@@ -68,11 +68,13 @@
             bytes: 7,
             name: '',
             divisibility: '',
-            premine: '',
+            premine: 1,
+            premine128: 1,
             symbol: '',
             amount: 1,
             amount128: 1,
-            cap: '',
+            cap: 1,
+            cap128: 1,
             startHeight: '',
             endHeight: '',
             startOffset: '',
@@ -248,7 +250,7 @@
                 readonly
                 value="${this.state.prefix}${this.state.opcode} ${this.state
                   .bytes} 020304 ${this.state.encodedHex}${this.state
-                  .suffix}${this.state.amount128}"
+                  .suffix}${this.state.amount128}0601"
                 placeholder="Encoded hex will appear here"
               ></textarea>
             </div>
