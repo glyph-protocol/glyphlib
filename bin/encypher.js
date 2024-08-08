@@ -3,12 +3,13 @@
 import { Runestone } from '../src/runestones.js' // Adjust the path as necessary
 
 // Function to generate the hex for 100 premine
-function generateHexForPremine(runeName) {
+function generateHexForPremine (runeName) {
   const json = {
     name: runeName,
-    amount: 1, // Assuming 1 for the example, adjust if necessary
-    cap: 1, // Assuming 1 for the example, adjust if necessary
-    premine: 100
+    glyph: 100,
+    amount: 0, // Assuming 1 for the example, adjust if necessary
+    cap: 0, // Assuming 1 for the example, adjust if necessary
+    premine: 1
   }
 
   const runestone = Runestone.create(json, 'etch')

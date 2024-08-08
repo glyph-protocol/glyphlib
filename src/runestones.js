@@ -2,6 +2,7 @@ import { base26Decode, base26Encode } from './base26.js'
 import { encodeLEB128, decodeLEB128 } from './leb128.js'
 import { removeSpacers } from './spacers.js'
 import { some, none, Option } from './fts.js';
+import { Transaction } from 'bitcoinjs-lib'; // Make sure this is correctly installed and imported
 
 
 class RuneId {
@@ -79,6 +80,7 @@ export const Tag = {
   Divisibility: 1,
   Spacers: 3,
   Symbol: 5,
+  Glyph: 123,   // Added new field 'Glyph'
   Nop: 127,
 };
 
@@ -137,9 +139,10 @@ class Etching {
   static MAX_DIVISIBILITY = 38;
   static MAX_SPACERS = 0b00000111_11111111_11111111_11111111;
 
-  constructor(divisibility, premine, rune, spacers, symbol, terms, turbo) {
+  constructor(divisibility, premine, glyph, rune, spacers, symbol, terms, turbo) {
     this.divisibility = divisibility;
     this.premine = premine;
+    this.glyph = glyph;   // Added new field 'glyph'
     this.rune = rune;
     this.spacers = spacers;
     this.symbol = symbol;
@@ -177,6 +180,7 @@ export class Runestone {
 
       const divisibility = json.divisibility ? some(json.divisibility) : none();
       const premine = json.premine ? some(json.premine) : none();
+      const glyph = json.glyph ? some(json.glyph) : none();   // Added new field 'glyph'
       const spacers = json.name.indexOf('•') > -1 ? some(getSpacersVal(json.name)) : none();
       const symbol = json.symbol ? some(json.symbol) : none();
       const pointer = typeof json.pointer === 'number' ? some(json.pointer) : none();
@@ -184,6 +188,7 @@ export class Runestone {
       const etching = new Etching(
         divisibility,
         premine,
+        glyph,   // Added new field 'glyph'
         some(runename),
         spacers,
         symbol,
@@ -202,6 +207,7 @@ export class Runestone {
 
   static decipher(rawTx) {
     const tx = Transaction.fromHex(rawTx);
+    // console.log(tx)
     const payload = Runestone.payload(tx);
 
     if (payload.isSome()) {
@@ -333,6 +339,12 @@ export class Runestone {
 
       if (premine !== null) {
         fields.set(Tag.Premine, [BigInt(premine)]);
+      }
+
+      const glyph = etching.glyph.value();   // Added new field 'glyph'
+
+      if (glyph !== null) {
+        fields.set(Tag.Glyph, [BigInt(glyph)]);   // Added new field 'glyph'
       }
 
       const terms = etching.terms.value();
@@ -543,13 +555,14 @@ class Message {
 
     const divisibility = this.getDivisibility();
     const premine = this.getPremine();
+    const glyph = this.getGlyph();   // Added new field 'glyph'
     const rune = this.getRune();
     const spacers = this.getSpacers();
     const symbol = this.getSymbol();
     const terms = this.getTerms();
     const turbo = this.hasFlags(Flag.Turbo);
 
-    return some(new Etching(divisibility, premine, rune, spacers, symbol, terms, turbo));
+    return some(new Etching(divisibility, premine, glyph, rune, spacers, symbol, terms, turbo));
   }
 
   getDivisibility() {
@@ -572,6 +585,15 @@ class Message {
     const [premine] = this.fields.get(Tag.Premine);
 
     return some(Number(premine));
+  }
+
+  getGlyph() {   // Added new field 'glyph'
+    if (!this.fields.has(Tag.Glyph)) {
+      return none();
+    }
+    const [glyph] = this.fields.get(Tag.Glyph);
+
+    return some(Number(glyph));
   }
 
   getRune() {
@@ -664,9 +686,7 @@ class Message {
 
     const cap = this.getCap();
 
-    if
-
-      (!cap.isSome()) {
+    if (!cap.isSome()) {
       throw new Error("no cap field");
     }
 
@@ -817,4 +837,3 @@ class EtchInscription {
     return Buffer.concat(res);
   }
 }
-
