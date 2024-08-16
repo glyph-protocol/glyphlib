@@ -3,9 +3,10 @@
 import { Runestone } from '../src/runestones.js' // Adjust the path as necessary
 
 // Function to decode the hex string and output JSON
-function decodeHexString (hexString) {
+function decodeHexString(hexString) {
   try {
-    const runestoneOption = Runestone.decipher(hexString)
+    const runestoneOption = Runestone.decipher(hexString, 0)
+    console.log(runestoneOption)
 
     if (runestoneOption.isNone()) {
       throw new Error('Invalid or non-decodable hex string.')
@@ -25,33 +26,33 @@ function decodeHexString (hexString) {
       })),
       etching: runestone.etching.isSome()
         ? {
-            divisibility: runestone.etching.value().divisibility.isSome() ? runestone.etching.value().divisibility.value() : null,
-            premine: runestone.etching.value().premine.isSome() ? runestone.etching.value().premine.value() : null,
-            rune: runestone.etching.value().rune.isSome() ? runestone.etching.value().rune.value().toString() : null,
-            spacers: runestone.etching.value().spacers.isSome() ? runestone.etching.value().spacers.value() : null,
-            symbol: runestone.etching.value().symbol.isSome() ? runestone.etching.value().symbol.value() : null,
-            terms: runestone.etching.value().terms.isSome()
-              ? {
-                  amount: runestone.etching.value().terms.value().amount,
-                  cap: runestone.etching.value().terms.value().cap,
-                  height: {
-                    start: runestone.etching.value().terms.value().height.start.isSome() ? runestone.etching.value().terms.value().height.start.value() : null,
-                    end: runestone.etching.value().terms.value().height.end.isSome() ? runestone.etching.value().terms.value().height.end.value() : null
-                  },
-                  offset: {
-                    start: runestone.etching.value().terms.value().offset.start.isSome() ? runestone.etching.value().terms.value().offset.start.value() : null,
-                    end: runestone.etching.value().terms.value().offset.end.isSome() ? runestone.etching.value().terms.value().offset.end.value() : null
-                  }
-                }
-              : null,
-            turbo: runestone.etching.value().turbo
-          }
+          divisibility: runestone.etching.value().divisibility.isSome() ? runestone.etching.value().divisibility.value() : null,
+          premine: runestone.etching.value().premine.isSome() ? runestone.etching.value().premine.value() : null,
+          rune: runestone.etching.value().rune.isSome() ? runestone.etching.value().rune.value().toString() : null,
+          spacers: runestone.etching.value().spacers.isSome() ? runestone.etching.value().spacers.value() : null,
+          symbol: runestone.etching.value().symbol.isSome() ? runestone.etching.value().symbol.value() : null,
+          terms: runestone.etching.value().terms.isSome()
+            ? {
+              amount: runestone.etching.value().terms.value().amount,
+              cap: runestone.etching.value().terms.value().cap,
+              height: {
+                start: runestone.etching.value().terms.value().height.start.isSome() ? runestone.etching.value().terms.value().height.start.value() : null,
+                end: runestone.etching.value().terms.value().height.end.isSome() ? runestone.etching.value().terms.value().height.end.value() : null
+              },
+              offset: {
+                start: runestone.etching.value().terms.value().offset.start.isSome() ? runestone.etching.value().terms.value().offset.start.value() : null,
+                end: runestone.etching.value().terms.value().offset.end.isSome() ? runestone.etching.value().terms.value().offset.end.value() : null
+              }
+            }
+            : null,
+          turbo: runestone.etching.value().turbo
+        }
         : null,
       mint: runestone.mint.isSome()
         ? {
-            block: runestone.mint.value().block,
-            idx: runestone.mint.value().idx
-          }
+          block: runestone.mint.value().block,
+          idx: runestone.mint.value().idx
+        }
         : null,
       pointer: runestone.pointer.isSome() ? runestone.pointer.value() : null
     }

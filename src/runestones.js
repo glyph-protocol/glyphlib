@@ -1,8 +1,9 @@
 import { base26Decode, base26Encode } from './base26.js'
 import { encodeLEB128, decodeLEB128 } from './leb128.js'
-import { removeSpacers } from './spacers.js'
+import { removeSpacers, getSpacersVal } from './spacers.js'
 import { some, none, Option } from './fts.js';
-import { Transaction } from 'bitcoinjs-lib'; // Make sure this is correctly installed and imported
+import { chunks, toPushData } from "./utils.js";
+import { Transaction, script } from 'bitcoinjs-lib'; // Make sure this is correctly installed and imported
 
 
 class RuneId {
@@ -206,6 +207,7 @@ export class Runestone {
   }
 
   static decipher(rawTx) {
+    // console.log(rawTx)
     const tx = Transaction.fromHex(rawTx);
     // console.log(tx)
     const payload = Runestone.payload(tx);
@@ -216,6 +218,8 @@ export class Runestone {
       const etching = message.getEtching();
       const mint = message.getMint();
       const pointer = message.getPointer();
+
+      // console.log('message', message)
 
       return some(new Runestone(message.edicts, etching, mint, pointer));
     }
@@ -255,9 +259,12 @@ export class Runestone {
     for (const output of tx.outs) {
       const ls = script.decompile(output.script);
 
+
       if (ls[0] !== script.OPS.OP_RETURN) {
         continue;
       }
+
+
 
       if (ls[1] !== Runestone.MAGIC_NUMBER) {
         continue;
